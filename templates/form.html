@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>김포남현교회 주보 생성</title>
+<style>
+* { box-sizing: border-box; }
+body { font-family: 'Malgun Gothic', sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; padding-right: 140px; background: #f5f5f5; }
+h1 { text-align: center; color: #1a237e; margin-bottom: 30px; }
+h2 { color: #1a237e; border-left: 4px solid #1a237e; padding-left: 10px; margin-top: 30px; }
+h3 { color: #444; margin-top: 20px; }
+.form-group { margin-bottom: 15px; }
+label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; }
+label .required { color: #c62828; margin-left: 2px; }
+input[type="text"], input[type="date"], textarea, select {
+    width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;
+}
+textarea { min-height: 150px; resize: vertical; line-height: 1.8; }
+.worship-row { display: flex; gap: 10px; margin-bottom: 5px; }
+.worship-row input:first-child { width: 120px; flex-shrink: 0; }
+.worship-row input:last-child { flex: 1; }
+.btn-add { background: #e8eaf6; border: 1px dashed #1a237e; padding: 8px 15px; cursor: pointer; border-radius: 5px; color: #1a237e; }
+.btn-add:hover { background: #c5cae9; }
+.btn-remove { background: #ffebee; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px; color: #c62828; }
+.btn-submit {
+    padding: 15px 40px; font-size: 18px; border: none; border-radius: 8px; cursor: pointer; margin: 0 10px;
+}
+.btn-preview { background: #e8eaf6; color: #1a237e; }
+.btn-pdf { background: #1a237e; color: white; }
+.btn-submit:hover { opacity: 0.85; }
+.page-tabs { display: flex; gap: 5px; margin-bottom: 20px; position: sticky; top: 0; z-index: 100; background: #f5f5f5; padding: 10px 0; }
+.page-tab { padding: 10px 16px; border: 2px solid #1a237e; background: white; color: #1a237e; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold; flex: 1; }
+.page-tab.active { background: #1a237e; color: white; }
+.page-tab:hover { opacity: 0.85; }
+.section-card { background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+.announcement-item { display: flex; gap: 10px; margin-bottom: 5px; }
+.announcement-item textarea { min-height: 180px; }
+.help-text { font-size: 12px; color: #777; margin-top: 3px; }
+</style>
+</head>
+<body>
+<h1>📋 김포남현교회 주보 생성</h1>
+
+<div class="page-tabs">
+  <button type="button" class="page-tab active" onclick="showPage(0)">기본정보 + 1면</button>
+  <button type="button" class="page-tab" onclick="showPage(1)">2면 (예배순서)</button>
+  <button type="button" class="page-tab" onclick="showPage(2)">2면 (교회소식)</button>
+  <button type="button" class="page-tab" onclick="showPage(3)">3면 (편지)</button>
+  <button type="button" class="page-tab" onclick="showPage(4)">4면 (사진·말씀)</button>
+</div>
+
+<form id="juboForm" method="POST" enctype="multipart/form-data">
+<p style="text-align:right; font-size:13px; color:#c62828; margin-bottom:10px;"><span class="required">*</span> 표시는 필수 입력 항목입니다.</p>
+
+<div class="page-panel" data-page="0">
+
+<!-- 기본 정보 -->
+<div class="section-card">
+<h2>📌 기본 정보</h2>
+<div class="form-group">
+  <label>날짜 (예: 6월 07일) <span class="required">*</span></label>
+  <input type="text" name="date" value="6월 07일" required>
+</div>
+<div style="display:flex; gap:15px;">
+  <div class="form-group" style="flex:1;">
+    <label>제 __권</label>
+    <input type="text" name="volume" value="23">
+  </div>
+  <div class="form-group" style="flex:1;">
+    <label>제 __호</label>
+    <input type="text" name="issue" value="2026-23">
+  </div>
+</div>
+<div class="form-group">
+  <label>2026년 표어</label>
+  <input type="text" name="year_theme" value='2026년 표어 : "믿음의 뿌리는 깊게, 삶은 넓게" (엡 4:15)'>
+</div>
+</div>
+
+<!-- 1면: 설교 칼럼 -->
+<div class="section-card">
+<h2>📖 1면 - 설교 칼럼</h2>
+<div class="form-group">
+  <label>설교 제목 <span class="required">*</span></label>
+  <input type="text" name="sermon_title" value="긍휼(矜恤), 하나님의 마음" required>
+</div>
+<div class="form-group">
+  <label>설교자 <span class="required">*</span></label>
+  <input type="text" name="sermon_author" value="송영환 목사" required>
+</div>
+<div class="form-group">
+  <label>설교 본문 (내용 전체) <span class="required">*</span></label>
+  <textarea name="sermon_body" rows="15" placeholder="설교 칼럼 내용을 여기에 붙여넣기 하세요..." required>예수님께서는 산상수훈(山上垂訓)에서 "긍휼히 여기는 자는 복이 있나니 그들이 긍휼히 여김을 받을 것임이요"(마 5:7)라고 말씀하셨다. 오늘날 많은사람들은 복(Blessing)을 물질이나 성공, 건강과 같은 외적인 조건으로 생각한다. 그러나 예수님께서 말씀하신 복은 세상이 말하는 복과는 다르다. 성경이 말하는 참된 복은 하나님을 알고 그 분의 성품(品性)을 닮아 가는 데 있다.
+그 가운데 예수님께서 강조하신 다섯 번째 복이 바로 긍휼이다. 긍휼이란 죄로 인해 심판(審判)을 받아 마땅한 사람을 불쌍히 여기고 용서하며 회복시키고자 하는 하나님의 사랑을 의미한다. 인간은 본래 자신의 상처와 이익을 먼저 생각하기 때문에 쉽게 용서하지 못한다. 그러나 하나님은 다르시다. 성경은 "긍휼이 풍성하신 하나님"(엡 2:4)이라고 말씀한다. 하나님께서는 죄와 허물로 죽었던 우리를 불쌍히 여기셔서 예수 그리스도를 통해 구원의 은혜를 베푸셨다.
+예수님께서는 누가복음 10장에 나오는 선한 사마리아인의 비유를 통해 참된 긍휼의 모습을 보여 주셨다. 사마리아 사람은 강도 만난 사람이 누구인지, 어떤 민족인지, 자신과 어떤 관계가 있는지를 먼저 따지지 않았다. 그는 단지 고통 가운데 있는 한 사람을 보았고, 그 필요를 채워 주었다. 여기서 우리는 긍휼이 단순한 감정(感情)이 아니라 행동(行動)임을 배우게 된다. 긍휼은 "불쌍하다"는 생각에 머무는 것이 아니라 실제로 손을 내밀어 돕는 사랑의 실천이다.
+또한 예수님께서는 마태복음 18장의 일만 달란트 비유를 통해 긍휼의 중요성을 가르치셨다. 왕에게 엄청난 빚을 탕감받은 종이 자신에게 작은 빚을 진 동료를 용서하지 못한 이야기는 우리에게 큰 교훈을 준다. 우리는 하나님 앞에서 도저히 갚을 수 없는 죄의 빚을 용서받은 사람들이다. 그러므로 다른 사람의 허물과 실수를 용서하는 것은 선택이 아니라 하나님 은혜를 받은 사람의 자연스러운 열매이다.
+긍휼은 우리의 힘만으로는 실천하기 어렵다. 특히 나에게 상처를 준 사람이나 이해하기 어려운 사람을 용서하는 것은 더욱 쉽지 않다. 그러나 하나님께서 우리를 어떻게 사랑하시고 용서하셨는지를 기억할 때 우리의 마음도 변화된다. 기도(祈禱) 가운데 성령(聖靈)의 도우심을 구할 때 마음은 사랑으로, 원망은 용서로 바뀌게 된다.
+오늘날 세상은 강한 사람을 높이 평가합니다. 그러나 하나님께서는 긍휼히 여기는 사람을 복 있는 사람이라고 선언하십니다. 왜냐하면 긍휼은 하나님 나라의 성품이며, 예수 그리스도를 닮아 가는 삶의 증거이기 때문입니다.
+긍휼은 약한 사람의 감정이 아니라 하나님의 마음을 품은 사람의 능력입니다. 십자가의 은혜를 경험한 사람은 용서하고 품으며 회복시키는 삶을 살아갑니다. 우리가 하나님께 받은 긍휼을 가정과 교회, 그리고 세상 속에 흘려보낼 때 하나님의 사랑이 더욱 풍성하게 나타날 것입니다. 하나님께 받은 긍휼은 머물러 있는 은혜가 아니라 흘러가는 은혜입니다. 오늘도 하나님의 긍휼이 우리를 통해 가정과 교회와 세상으로 흘러가기를 소망합니다.</textarea>
+  <div class="help-text">줄바꿈은 그대로 반영됩니다.</div>
+</div>
+<div class="form-group">
+  <label>새가족 사진</label>
+  <input type="file" name="new_member_photo" accept="image/*">
+</div>
+<div class="form-group">
+  <label>새가족 이름/설명</label>
+  <input type="text" name="new_member_name" value="남현가족을 환영합니다. (김순례 집사)">
+</div>
+</div>
+
+</div><!-- /page-panel 0 -->
+
+<div class="page-panel" data-page="1" style="display:none;">
+<!-- 2면 좌: 예배순서 -->
+<div class="section-card">
+<h2>⛪ 2면 좌 - 예배 순서</h2>
+
+<div class="form-group">
+  <label>첫번째 예배 이름</label>
+  <input type="text" name="worship_morning_name" value="주일 오전예배">
+</div>
+<div class="form-group" style="display:flex; gap:10px;">
+  <div style="flex:1;"><label>시간 안내</label><input type="text" name="worship_morning_time" value="I부7:30 Ⅱ부9:30 Ⅲ부 11:30"></div>
+</div>
+<div class="form-group">
+  <label>설교 제목 <span class="required">*</span></label>
+  <input type="text" name="sermon_morning_title" value="마음이 청결한 자의 복" required>
+</div>
+<div id="morning-items">
+  <div class="worship-row"><input type="text" name="morning_label_0" value="찬 양"><input type="text" name="morning_value_0" value="찬양팀"></div>
+  <div class="worship-row"><input type="text" name="morning_label_1" value="주기도송"><input type="text" name="morning_value_1" value="하늘에 계신"></div>
+  <div class="worship-row"><input type="text" name="morning_label_2" value="신앙고백"><input type="text" name="morning_value_2" value="사도신경"></div>
+  <div class="worship-row"><input type="text" name="morning_label_3" value="성찰과소망"><input type="text" name="morning_value_3" value="성찰과 소망의 기도"></div>
+  <div class="worship-row"><input type="text" name="morning_label_4" value="기 도"><input type="text" name="morning_value_4" value="1부:이정임 권사 2부:김은태 집사 3부:박종렬 장로"></div>
+  <div class="worship-row"><input type="text" name="morning_label_5" value="찬 송"><input type="text" name="morning_value_5" value="예수를 나의 구주 삼고(찬송288장)"></div>
+  <div class="worship-row"><input type="text" name="morning_label_6" value="교회소식"><input type="text" name="morning_value_6" value="인도자"></div>
+  <div class="worship-row"><input type="text" name="morning_label_7" value="찬 양"><input type="text" name="morning_value_7" value="(주만이 내 반석) ……… 할렐루야 성가대(3부)"></div>
+  <div class="worship-row"><input type="text" name="morning_label_8" value="성경봉독"><input type="text" name="morning_value_8" value="마태복음5:1-8(신약5쪽)"></div>
+  <div class="worship-row"><input type="text" name="morning_label_9" value="설 교"><input type="text" name="morning_value_9" value="송영환 목사"></div>
+  <div class="worship-row"><input type="text" name="morning_label_10" value="예물봉헌"><input type="text" name="morning_value_10" value="주님의 마음을 본받는 자(찬송455장)"></div>
+  <div class="worship-row"><input type="text" name="morning_label_11" value="파송의 노래"><input type="text" name="morning_value_11" value="♬ 당신은 소중한 사람"></div>
+  <div class="worship-row"><input type="text" name="morning_label_12" value="축 복"><input type="text" name="morning_value_12" value="송영환 목사"></div>
+</div>
+<button type="button" class="btn-add" onclick="addWorshipRow('morning')">+ 항목 추가</button>
+
+<div class="form-group">
+  <label>두번째 예배 이름</label>
+  <input type="text" name="worship_afternoon_name" value="오후 찬양예배">
+</div>
+<div class="form-group" style="display:flex; gap:10px;">
+  <div style="flex:1;"><label>시간 안내</label><input type="text" name="worship_afternoon_time" value="오후2:30"></div>
+</div>
+<div class="form-group">
+  <label>설교 제목 <span class="required">*</span></label>
+  <input type="text" name="sermon_afternoon_title" value="말씀의 달콤함을 경험하라" required>
+</div>
+<div id="afternoon-items">
+  <div class="worship-row"><input type="text" name="afternoon_label_0" value="찬 양"><input type="text" name="afternoon_value_0" value="찬양팀"></div>
+  <div class="worship-row"><input type="text" name="afternoon_label_1" value="찬 송"><input type="text" name="afternoon_value_1" value="달고 오묘한 그 말씀(찬송200장)"></div>
+  <div class="worship-row"><input type="text" name="afternoon_label_2" value="기 도"><input type="text" name="afternoon_value_2" value="김성혜 집사"></div>
+  <div class="worship-row"><input type="text" name="afternoon_label_3" value="특 송"><input type="text" name="afternoon_value_3" value="김용원 지휘자"></div>
+  <div class="worship-row"><input type="text" name="afternoon_label_4" value="성경봉독"><input type="text" name="afternoon_value_4" value="시편 19:10(구약815쪽)"></div>
+  <div class="worship-row"><input type="text" name="afternoon_label_5" value="특송/성구암송"><input type="text" name="afternoon_value_5" value="아멘목장"></div>
+  <div class="worship-row"><input type="text" name="afternoon_label_6" value="설 교"><input type="text" name="afternoon_value_6" value="송영환 목사"></div>
+  <div class="worship-row"><input type="text" name="afternoon_label_7" value="찬 송"><input type="text" name="afternoon_value_7" value="구주를 생각만 해도(찬송85장)"></div>
+  <div class="worship-row"><input type="text" name="afternoon_label_8" value="교회소식"><input type="text" name="afternoon_value_8" value="인도자"></div>
+  <div class="worship-row"><input type="text" name="afternoon_label_9" value="주기도문"><input type="text" name="afternoon_value_9" value="다같이"></div>
+</div>
+<button type="button" class="btn-add" onclick="addWorshipRow('afternoon')">+ 항목 추가</button>
+
+<div class="form-group">
+  <label>세번째 예배 이름</label>
+  <input type="text" name="worship_wednesday_name" value="수요 목장 연합예배">
+</div>
+<div class="form-group">
+  <label>설교 제목 <span class="required">*</span></label>
+  <input type="text" name="sermon_wednesday_title" value="남과 비교하지 말고 주님을 바라보라" required>
+</div>
+<div id="wednesday-items">
+  <div class="worship-row"><input type="text" name="wednesday_label_0" value="사회"><input type="text" name="wednesday_value_0" value="박종렬 장로"></div>
+  <div class="worship-row"><input type="text" name="wednesday_label_1" value="기 도"><input type="text" name="wednesday_value_1" value="사회자"></div>
+  <div class="worship-row"><input type="text" name="wednesday_label_2" value="사도신경"><input type="text" name="wednesday_value_2" value="다같이"></div>
+  <div class="worship-row"><input type="text" name="wednesday_label_3" value="찬 송"><input type="text" name="wednesday_value_3" value="이 눈에 아무 증거 아니 뵈어도(찬송545장)"></div>
+  <div class="worship-row"><input type="text" name="wednesday_label_4" value="기 도"><input type="text" name="wednesday_value_4" value="고재욱 장로"></div>
+  <div class="worship-row"><input type="text" name="wednesday_label_5" value="성경봉독"><input type="text" name="wednesday_value_5" value="(마태복음 25:14-30) ………… 이미숙 집사"></div>
+  <div class="worship-row"><input type="text" name="wednesday_label_6" value="특 송"><input type="text" name="wednesday_value_6" value="꿈초원 목자 부목사"></div>
+  <div class="worship-row"><input type="text" name="wednesday_label_7" value="설 교"><input type="text" name="wednesday_value_7" value="송영환 목사"></div>
+  <div class="worship-row"><input type="text" name="wednesday_label_8" value="찬 송"><input type="text" name="wednesday_value_8" value="예수 따라가며(찬송449장)"></div>
+  <div class="worship-row"><input type="text" name="wednesday_label_9" value="합심기도"><input type="text" name="wednesday_value_9" value="다같이"></div>
+  <div class="worship-row"><input type="text" name="wednesday_label_10" value="주기도문"><input type="text" name="wednesday_value_10" value="다같이"></div>
+</div>
+<button type="button" class="btn-add" onclick="addWorshipRow('wednesday')">+ 항목 추가</button>
+
+<h3 style="margin-top:20px;">새벽기도회</h3>
+<div style="display:flex; gap:10px; margin-bottom:10px;">
+  <div class="form-group" style="flex:1;"><label>이름</label><input type="text" name="dawn_name" value="새벽기도회(월~금)"></div>
+  <div class="form-group" style="flex:1;"><label>시간</label><input type="text" name="dawn_time" value="새벽5:30"></div>
+</div>
+<div style="display:flex; gap:10px;">
+  <div class="form-group" style="flex:1;"><label>설교 범위</label><input type="text" name="dawn_content" value="사도행전 - 로마서"></div>
+  <div class="form-group" style="flex:1;"><label>담당</label><input type="text" name="dawn_leader" value="담당 교역자"></div>
+</div>
+</div>
+
+</div><!-- /page-panel 1 -->
+
+<div class="page-panel" data-page="2" style="display:none;">
+<!-- 2면 우: 교회소식 -->
+<div class="section-card">
+<h2>📢 2면 우 - 교회 소식</h2>
+<div class="help-text" style="margin-bottom:15px;">각 항목에 소식을 작성하세요. ■ 제목, 번호 등을 그대로 넣으면 됩니다.</div>
+<div id="announcement-items">
+  <div class="announcement-item">
+    <textarea name="announcements">■ 예배 및 환영
+1. 예배에 오신 성도님들을 환영합니다. 집중하여 예배합시다.
+2. 이번 주 수요일은 꿈초원 주관 목장 연합예배로 드립니다.
+3. 교회 안내와 등록을 원하시는 분은 안내받으시길 바랍니다.
+4. 지난주 등록 신청한 교우를 환영하며 소개합니다.
+26-28) 김순례집사, 목장: 푸른목장, 주보장:256번.</textarea>
+    <button type="button" class="btn-remove" onclick="this.parentElement.remove()">✕</button>
+  </div>
+  <div class="announcement-item">
+    <textarea name="announcements">■ 비전센터 헌당을 위한 기도
+1. 온 성도가 한마음으로 비전센터 헌당을 사모하게 하옵소서.
+2. 일천번제의 헌신을 통해 기도의 응답과 헌당의 열매를 허락하여 주옵소서.
+3. 성도들의 가정에 복을 주셔서 감사와 기쁨으로 헌신하게 하옵소서.
+4. 비전센터를 통하여 다음 세대가 하나님의 사람으로 세워지게 하소서!</textarea>
+    <button type="button" class="btn-remove" onclick="this.parentElement.remove()">✕</button>
+  </div>
+  <div class="announcement-item">
+    <textarea name="announcements">■ 공예배 참석운동
+1. "하나님 나라의 삶으로, 왕 되신 예수를 따르자" 라는 표어로 시작한 공예배 참석운동이 오늘로 마무리됩니다.
+2. 지난 12주가 훈련이었다면, 이제부터는 삶의 현장에서 실천하는 시간입니다.
+3. 오늘 오후 예배 성구암송과 특송은 아멘목장입니다.
+4. 공예배 참석운동 개인 출석부는 오늘까지 제출해 주시기 바랍니다.</textarea>
+    <button type="button" class="btn-remove" onclick="this.parentElement.remove()">✕</button>
+  </div>
+  <div class="announcement-item">
+    <textarea name="announcements">■ 마태복음 성경퀴즈
+1. 오늘 오후 예배 시 각 목장별 마태복음 성경퀴즈가 있습니다.
+2. 퀴즈 순서는 어르신 목장 후 각 목장 별로 실시합니다.
+3. 순서: 소망-온유-희망-요한-바울-여호수아-아멘-기쁨-감사-은혜-호산나-다윗-베다니-사랑-기드온-화평</textarea>
+    <button type="button" class="btn-remove" onclick="this.parentElement.remove()">✕</button>
+  </div>
+  <div class="announcement-item">
+    <textarea name="announcements">■ 확신제자 66기
+1. 확신제자과정은 우리교회를 등록한 성도들의 필수 과정입니다.
+2. 기독교 기본교리를 배우며 성도 간의 교제가 있는 소중한 시간입니다.
+3. 6월 28일부터 시작하며 참석을 원하시는 분은 담임 목사님 휴대폰으로 신청해 주시길 바랍니다.</textarea>
+    <button type="button" class="btn-remove" onclick="this.parentElement.remove()">✕</button>
+  </div>
+  <div class="announcement-item">
+    <textarea name="announcements">■ 공지사항
+1. 강단헌화-이번 주: 박길산 김상희(범사) 다음주: 박천미(범사)
+2. 주일중식봉사섬김시 중식 섬김에 우선 순위를 두시길 바랍니다.
+3. 할렐루야 성가대 헌신예배가 6월 21일 오후에 있습니다.
+4. 공간 사용 후 전등 및 냉방기를 꼭 확인해 주시길 바랍니다.
+5. 6월 봉사위원 확인하시고 성실하게 섬겨주시길 바랍니다.</textarea>
+    <button type="button" class="btn-remove" onclick="this.parentElement.remove()">✕</button>
+  </div>
+</div>
+<button type="button" class="btn-add" onclick="addAnnouncement()">+ 소식 추가</button>
+
+<h3>6월 봉사위원</h3>
+<div class="help-text" style="margin-bottom:10px;">주일별 기도 담당자를 입력하세요. 안내/헌금은 2주 단위로 입력합니다.</div>
+<table id="duty-table-form" style="width:100%; border-collapse:collapse; font-size:13px;">
+  <thead>
+    <tr style="background:#e8eaf6;">
+      <th style="padding:6px; border:1px solid #ccc;">일시</th>
+      <th style="padding:6px; border:1px solid #ccc;">1부 기도</th>
+      <th style="padding:6px; border:1px solid #ccc;">2부 기도</th>
+      <th style="padding:6px; border:1px solid #ccc;">3부 기도</th>
+      <th style="padding:6px; border:1px solid #ccc;">오후 기도</th>
+      <th style="padding:6px; border:1px solid #ccc;"></th>
+    </tr>
+  </thead>
+  <tbody id="duty-rows">
+    <tr>
+      <td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_date_0" value="7일" style="width:40px;"></td>
+      <td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_pray1_0" value="이정임" style="width:60px;"></td>
+      <td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_pray2_0" value="김은태" style="width:60px;"></td>
+      <td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_pray3_0" value="박종렬" style="width:60px;"></td>
+      <td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_pm_0" value="김성혜" style="width:60px;"></td>
+      <td style="border:1px solid #ccc; padding:4px;"><button type="button" class="btn-remove" onclick="removeDutyRow(this)">✕</button></td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_date_1" value="14일" style="width:40px;"></td>
+      <td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_pray1_1" value="김미경" style="width:60px;"></td>
+      <td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_pray2_1" value="김용서" style="width:60px;"></td>
+      <td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_pray3_1" value="김기송" style="width:60px;"></td>
+      <td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_pm_1" value="김육주" style="width:60px;"></td>
+      <td style="border:1px solid #ccc; padding:4px;"><button type="button" class="btn-remove" onclick="removeDutyRow(this)">✕</button></td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_date_2" value="21일" style="width:40px;"></td>
+      <td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_pray1_2" value="유성자" style="width:60px;"></td>
+      <td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_pray2_2" value="이장호" style="width:60px;"></td>
+      <td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_pray3_2" value="이순홍" style="width:60px;"></td>
+      <td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_pm_2" value="김은하" style="width:60px;"></td>
+      <td style="border:1px solid #ccc; padding:4px;"><button type="button" class="btn-remove" onclick="removeDutyRow(this)">✕</button></td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_date_3" value="28일" style="width:40px;"></td>
+      <td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_pray1_3" value="함장숙" style="width:60px;"></td>
+      <td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_pray2_3" value="김만섭" style="width:60px;"></td>
+      <td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_pray3_3" value="여두현" style="width:60px;"></td>
+      <td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_pm_3" value="동아리" style="width:60px;"></td>
+      <td style="border:1px solid #ccc; padding:4px;"><button type="button" class="btn-remove" onclick="removeDutyRow(this)">✕</button></td>
+    </tr>
+  </tbody>
+</table>
+<button type="button" class="btn-add" onclick="addDutyRow()" style="margin-top:8px;">+ 주차 추가</button>
+
+<h3 style="margin-top:15px;">안내/헌금 (2주 단위)</h3>
+<div class="help-text" style="margin-bottom:10px;">2주씩 묶어서 입력합니다. 줄바꿈으로 2줄 입력 가능합니다.</div>
+<div style="display:flex; gap:10px; margin-bottom:8px;">
+  <div style="flex:1;"><label>1~2주 (2부)</label><textarea name="duty_offer_group1_2bu" rows="2" style="min-height:auto;">이미숙
+정명자</textarea></div>
+  <div style="flex:1;"><label>1~2주 (3부)</label><textarea name="duty_offer_group1_3bu" rows="2" style="min-height:auto;">신영숙
+이미경</textarea></div>
+  <div style="flex:1;"><label>1~2주 (총별안내)</label><textarea name="duty_offer_group1_etc" rows="2" style="min-height:auto;">1층
+이정임</textarea></div>
+</div>
+<div style="display:flex; gap:10px; margin-bottom:8px;">
+  <div style="flex:1;"><label>3~4주 (2부)</label><textarea name="duty_offer_group2_2bu" rows="2" style="min-height:auto;">임미경</textarea></div>
+  <div style="flex:1;"><label>3~4주 (3부)</label><textarea name="duty_offer_group2_3bu" rows="2" style="min-height:auto;">강민주
+강규은</textarea></div>
+  <div style="flex:1;"><label>3~4주 (총별안내)</label><textarea name="duty_offer_group2_etc" rows="2" style="min-height:auto;">2층
+구현광 외</textarea></div>
+</div>
+<h3 style="margin-top:15px;">중식 섬김이</h3>
+<div class="help-text" style="margin-bottom:10px;">날짜, 이름, 목장을 입력하세요. 주차를 추가/삭제할 수 있습니다.</div>
+<table id="lunch-table" style="width:100%; border-collapse:collapse; font-size:13px; margin-bottom:10px;">
+  <thead>
+    <tr style="background:#e8eaf6;">
+      <th style="padding:6px; border:1px solid #ccc;">날짜</th>
+      <th style="padding:6px; border:1px solid #ccc;">이름</th>
+      <th style="padding:6px; border:1px solid #ccc;">목장</th>
+      <th style="padding:6px; border:1px solid #ccc;"></th>
+    </tr>
+  </thead>
+  <tbody id="lunch-rows">
+    <tr>
+      <td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_lunch_date_0" value="7일" style="width:50px;"></td>
+      <td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_lunch_name_0" value="이정임" style="width:80px;"></td>
+      <td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_lunch_group_0" value="기드온목장" style="width:80px;"></td>
+      <td style="border:1px solid #ccc; padding:4px;"><button type="button" class="btn-remove" onclick="removeLunchRow(this)">✕</button></td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_lunch_date_1" value="14일" style="width:50px;"></td>
+      <td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_lunch_name_1" value="김미경" style="width:80px;"></td>
+      <td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_lunch_group_1" value="베다니목장" style="width:80px;"></td>
+      <td style="border:1px solid #ccc; padding:4px;"><button type="button" class="btn-remove" onclick="removeLunchRow(this)">✕</button></td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_lunch_date_2" value="21일" style="width:50px;"></td>
+      <td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_lunch_name_2" value="유성자" style="width:80px;"></td>
+      <td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_lunch_group_2" value="온유목장" style="width:80px;"></td>
+      <td style="border:1px solid #ccc; padding:4px;"><button type="button" class="btn-remove" onclick="removeLunchRow(this)">✕</button></td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_lunch_date_3" value="28일" style="width:50px;"></td>
+      <td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_lunch_name_3" value="함장숙" style="width:80px;"></td>
+      <td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_lunch_group_3" value="호산나목장" style="width:80px;"></td>
+      <td style="border:1px solid #ccc; padding:4px;"><button type="button" class="btn-remove" onclick="removeLunchRow(this)">✕</button></td>
+    </tr>
+  </tbody>
+</table>
+<button type="button" class="btn-add" onclick="addLunchRow()" style="margin-bottom:10px;">+ 주차 추가</button>
+<div class="form-group">
+  <label>청소</label>
+  <input type="text" name="duty_cleaning" value="6월 본당 청소 – 바울, 희망목장">
+</div>
+</div>
+
+</div><!-- /page-panel 2 -->
+
+<div class="page-panel" data-page="3" style="display:none;">
+<!-- 3면 좌: 편지 -->
+<div class="section-card">
+<h2>✉️ 3면 - 사랑하는 분을 위한 편지</h2>
+<div class="form-group">
+  <label>편지 제목 <span class="required">*</span></label>
+  <input type="text" name="letter_title" value="가위 바위 보" required>
+</div>
+<div class="form-group">
+  <label>편지 본문 <span class="required">*</span></label>
+  <textarea name="letter_body" rows="15" placeholder="편지 내용을 여기에 붙여넣기 하세요..." required>일반 스포츠 경기에는 승자와 패자가 분명합니다. 올림픽이나 월드컵에서는 더 좋은 성적을 낸 사람이 승자가 되고, 그렇지 못한 사람은 패자가 됩니다. 이러한 수직적 구조는 승자에게는 기쁨을, 패자에게는 아쉬움을 남깁니다. 반면 가위바위보는 조금 다릅니다.
+가위는 보를 이기고, 보는 바위를 이기며, 바위는 가위를 이깁니다. 서로가 서로를 이기는 원형의 순환구조를 가지고 있기 때문에 절대적인 승자도 패자도 없습니다. 실력보다 운과 예측 불가능성이 중요한 게임입니다.
+호주의 한 연구에 따르면 가위바위보는 오히려 복잡한 계산보다 무작위로 내는 사람이 더 유리하다고 합니다. 상대를 지나치게 분석하거나 이전 결과를 계산할수록 오히려 예측 가능해지기 때문입니다. 결국 이 게임은 누가 더 우월한가를 가리는 것이 아니라 모두가 함께 즐길 수 있는 놀이입니다.
+이 원리는 교회 공동체에도 적용될 수 있습니다. 교회 안의 봉사, 헌신, 구제, 이해, 사랑, 관용, 용서는 누가 더 높고 낮은지를 따지는 수직적 구조가 아니라 서로를 살리고 세워주는 원형의 순환구조여야 합니다. 치밀한 계산이나 서열의식, 우월감이 아니라 주님의 사랑이 돌고 도는 공동체가 될 때 교회는 더욱 건강해집니다. 결국 신앙생활은 경쟁에서 이기는 것이 아니라 사랑을 나누며 함께 살아가는 데 그 의미가 있습니다.</textarea>
+</div>
+<div class="form-group">
+  <label>글쓴이 <span class="required">*</span></label>
+  <input type="text" name="letter_author" value="오춘식 목사" required>
+</div>
+</div>
+
+</div><!-- /page-panel 3 -->
+
+<div class="page-panel" data-page="4" style="display:none;">
+<!-- 4면 -->
+<div class="section-card">
+<h2>📷 4면 - 행사 사진 & 말씀</h2>
+<div class="form-group">
+  <label>행사 사진</label>
+  <input type="file" name="event_photo" accept="image/*">
+</div>
+<div class="form-group">
+  <label>사진 캡션</label>
+  <input type="text" name="event_caption" value="2026 황동노회 그림, 글짓기 대회">
+</div>
+<div class="form-group">
+  <label>성경 말씀 (줄바꿈으로 구분)</label>
+  <textarea name="bible_verses" rows="8">3절  심령이 가난한 자는 복이 있나니 천국이 그들의 것임이요
+4절  애통하는 자는 복이 있나니 그들이 위로를 받을 것임이요
+5절  온유한 자는 복이 있나니 그들이 땅을 기업으로 받을 것임이요
+6절  의에 주리고 목마른 자는 복이 있나니 그들이 배부를 것임이요
+7절  긍휼히 여기는 자는 복이 있나니 그들이 긍휼히 여김을 받을 것임이요
+(마태복음 5장 3-7절)</textarea>
+</div>
+</div>
+
+</div><!-- /page-panel 4 -->
+
+<!-- 우측 플로팅 버튼 -->
+<div id="floatingActions">
+  <a href="/settings" class="fa-settings">⚙️ 공통설정</a>
+  <button type="button" onclick="openLoadModal()">📂 불러오기</button>
+  <button type="button" onclick="saveDraft()" class="fa-draft">💾 임시저장</button>
+  <button type="button" onclick="savePublish()" class="fa-publish">✅ 완성저장</button>
+  <button type="submit" formaction="/preview" formtarget="_blank" class="fa-preview">👁 미리보기</button>
+  <button type="submit" formaction="/generate" class="fa-pdf">📥 PDF</button>
+</div>
+
+</form>
+
+<style>
+#floatingActions {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 900;
+}
+#floatingActions button {
+    padding: 12px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    white-space: nowrap;
+    background: #1a237e;
+    color: white;
+}
+#floatingActions a {
+    padding: 12px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    white-space: nowrap;
+    text-decoration: none;
+    text-align: center;
+}
+#floatingActions .fa-settings { background: #424242; color: white; }
+#floatingActions .fa-draft { background: #ff9800; color: white; }
+#floatingActions .fa-publish { background: #4caf50; color: white; }
+#floatingActions .fa-preview { background: #42a5f5; color: white; }
+#floatingActions .fa-pdf { background: #c62828; color: white; }
+#floatingActions button:hover { opacity: 0.85; transform: scale(1.05); }
+</style>
+
+<!-- 불러오기 모달 -->
+<div id="loadModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
+  <div style="background:white; border-radius:12px; padding:30px; max-width:600px; width:90%; max-height:80vh; overflow-y:auto;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+      <h2 style="margin:0;">📂 저장된 주보</h2>
+      <button onclick="closeModal()" style="border:none; background:none; font-size:24px; cursor:pointer;">✕</button>
+    </div>
+    <div style="margin-bottom:15px;">
+      <button onclick="loadList('all')" class="tab-btn active">전체</button>
+      <button onclick="loadList('draft')" class="tab-btn">임시저장</button>
+      <button onclick="loadList('published')" class="tab-btn">완성본</button>
+    </div>
+    <div id="juboList" style="min-height:100px;"></div>
+  </div>
+</div>
+
+<style>
+.tab-btn { padding:8px 16px; border:1px solid #1a237e; background:white; color:#1a237e; border-radius:5px; cursor:pointer; margin-right:5px; }
+.tab-btn.active, .tab-btn:hover { background:#1a237e; color:white; }
+.jubo-item { display:flex; justify-content:space-between; align-items:center; padding:12px; border:1px solid #eee; border-radius:8px; margin-bottom:8px; }
+.jubo-item:hover { background:#f5f5f5; }
+.jubo-item .info { flex:1; }
+.jubo-item .info .title { font-weight:bold; font-size:14px; }
+.jubo-item .info .meta { font-size:12px; color:#888; margin-top:3px; }
+.jubo-item .actions button { margin-left:5px; padding:5px 10px; border:none; border-radius:4px; cursor:pointer; font-size:12px; }
+.btn-load-item { background:#1a237e; color:white; }
+.btn-delete-item { background:#ffebee; color:#c62828; }
+.badge-draft { background:#fff3e0; color:#e65100; padding:2px 6px; border-radius:3px; font-size:11px; }
+.badge-pub { background:#e8f5e9; color:#2e7d32; padding:2px 6px; border-radius:3px; font-size:11px; }
+</style>
+
+<script>
+let currentJuboId = null;
+
+function showPage(idx) {
+    document.querySelectorAll('.page-panel').forEach(p => p.style.display = 'none');
+    document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector(`.page-panel[data-page="${idx}"]`).style.display = 'block';
+    document.querySelectorAll('.page-tab')[idx].classList.add('active');
+}
+
+function addWorshipRow(prefix) {
+    const container = document.getElementById(prefix + '-items');
+    const count = container.querySelectorAll('.worship-row').length;
+    const row = document.createElement('div');
+    row.className = 'worship-row';
+    row.innerHTML = `<input type="text" name="${prefix}_label_${count}" placeholder="항목"><input type="text" name="${prefix}_value_${count}" placeholder="내용"><button type="button" class="btn-remove" onclick="removeWorshipRow(this,'${prefix}')">✕</button>`;
+    container.appendChild(row);
+}
+
+function removeWorshipRow(btn, prefix) {
+    btn.closest('.worship-row').remove();
+    reindexWorship(prefix);
+}
+
+function reindexWorship(prefix) {
+    const rows = document.querySelectorAll(`#${prefix}-items .worship-row`);
+    rows.forEach((row, i) => {
+        const inputs = row.querySelectorAll('input');
+        if (inputs[0]) inputs[0].name = `${prefix}_label_${i}`;
+        if (inputs[1]) inputs[1].name = `${prefix}_value_${i}`;
+    });
+}
+
+// 페이지 로드 시 기존 worship-row에 삭제 버튼 추가
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.worship-row').forEach(row => {
+        if (!row.querySelector('.btn-remove')) {
+            const prefix = row.closest('[id$="-items"]').id.replace('-items','');
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'btn-remove';
+            btn.textContent = '✕';
+            btn.onclick = function() { removeWorshipRow(this, prefix); };
+            row.appendChild(btn);
+        }
+    });
+});
+
+function addAnnouncement() {
+    const container = document.getElementById('announcement-items');
+    const item = document.createElement('div');
+    item.className = 'announcement-item';
+    item.innerHTML = `<textarea name="announcements" placeholder="■ 소식 제목&#10;내용..."></textarea><button type="button" class="btn-remove" onclick="this.parentElement.remove()">✕</button>`;
+    container.appendChild(item);
+}
+
+function addDutyRow() {
+    const tbody = document.getElementById('duty-rows');
+    const idx = tbody.querySelectorAll('tr').length;
+    const tr = document.createElement('tr');
+    const fields = ['date','pray1','pray2','pray3','pm'];
+    const widths = ['40px','60px','60px','60px','60px'];
+    tr.innerHTML = fields.map((f,i) =>
+        `<td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_${f}_${idx}" style="width:${widths[i]};"></td>`
+    ).join('') + `<td style="border:1px solid #ccc; padding:4px;"><button type="button" class="btn-remove" onclick="removeDutyRow(this)">✕</button></td>`;
+    tbody.appendChild(tr);
+    reindexDutyRows();
+}
+
+function removeDutyRow(btn) {
+    btn.closest('tr').remove();
+    reindexDutyRows();
+}
+
+function reindexDutyRows() {
+    const rows = document.querySelectorAll('#duty-rows tr');
+    const fields = ['date','pray1','pray2','pray3','pm'];
+    rows.forEach((row, idx) => {
+        const inputs = row.querySelectorAll('input');
+        inputs.forEach((input, fi) => {
+            input.name = `duty_${fields[fi]}_${idx}`;
+        });
+    });
+}
+
+function addLunchRow() {
+    const tbody = document.getElementById('lunch-rows');
+    const idx = tbody.querySelectorAll('tr').length;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_lunch_date_${idx}" style="width:50px;"></td><td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_lunch_name_${idx}" style="width:80px;"></td><td style="border:1px solid #ccc; padding:4px;"><input type="text" name="duty_lunch_group_${idx}" style="width:80px;"></td><td style="border:1px solid #ccc; padding:4px;"><button type="button" class="btn-remove" onclick="removeLunchRow(this)">✕</button></td>`;
+    tbody.appendChild(tr);
+    reindexLunchRows();
+}
+
+function removeLunchRow(btn) {
+    btn.closest('tr').remove();
+    reindexLunchRows();
+}
+
+function reindexLunchRows() {
+    const rows = document.querySelectorAll('#lunch-rows tr');
+    rows.forEach((row, idx) => {
+        const inputs = row.querySelectorAll('input');
+        if(inputs[0]) inputs[0].name = `duty_lunch_date_${idx}`;
+        if(inputs[1]) inputs[1].name = `duty_lunch_name_${idx}`;
+        if(inputs[2]) inputs[2].name = `duty_lunch_group_${idx}`;
+    });
+}
+
+// 폼 데이터를 JSON으로 수집
+function collectFormData() {
+    const f = document.getElementById('juboForm');
+    const data = {};
+    // 단일 텍스트 필드
+    ['date','volume','issue','year_theme','sermon_title','sermon_author','sermon_body',
+     'new_member_name','sermon_morning_title','sermon_afternoon_title','sermon_wednesday_title',
+     'duty_table','letter_title','letter_body','letter_author','event_caption','bible_verses'
+    ].forEach(name => {
+        const el = f.querySelector(`[name="${name}"]`);
+        if (el) data[name] = el.value;
+    });
+    // 광고 목록
+    data.announcements = [];
+    f.querySelectorAll('[name="announcements"]').forEach(el => {
+        if (el.value.trim()) data.announcements.push(el.value);
+    });
+    // 예배순서
+    ['morning','afternoon','wednesday'].forEach(prefix => {
+        data[prefix] = [];
+        let i = 0;
+        while (true) {
+            const label = f.querySelector(`[name="${prefix}_label_${i}"]`);
+            const value = f.querySelector(`[name="${prefix}_value_${i}"]`);
+            if (!label) break;
+            data[prefix].push({label: label.value, value: value ? value.value : ''});
+            i++;
+        }
+    });
+    return data;
+}
+
+// 저장
+async function saveJubo(isDraft) {
+    const data = collectFormData();
+    const title = data.date ? `${data.date} 주보` : (isDraft ? '임시저장' : '주보');
+    const res = await fetch('/api/save', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({id: currentJuboId, data, title, is_draft: isDraft})
+    });
+    const result = await res.json();
+    currentJuboId = result.id;
+    alert(isDraft ? '임시저장 완료!' : '완성본으로 저장되었습니다!');
+}
+
+function saveDraft() { saveJubo(true); }
+function savePublish() {
+    // 완성 저장 시에는 필수 항목 체크
+    const form = document.getElementById('juboForm');
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    saveJubo(false);
+}
+
+// 불러오기 모달
+function openLoadModal() {
+    document.getElementById('loadModal').style.display = 'flex';
+    loadList('all');
+}
+
+function closeModal() {
+    document.getElementById('loadModal').style.display = 'none';
+}
+
+async function loadList(type) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    const res = await fetch(`/api/list?type=${type}`);
+    const items = await res.json();
+    const container = document.getElementById('juboList');
+    if (items.length === 0) {
+        container.innerHTML = '<p style="text-align:center;color:#999;padding:30px;">저장된 주보가 없습니다.</p>';
+        return;
+    }
+    container.innerHTML = items.map(item => `
+        <div class="jubo-item">
+            <div class="info">
+                <div class="title">${item.title} ${item.is_draft ? '<span class="badge-draft">임시저장</span>' : '<span class="badge-pub">완성</span>'}</div>
+                <div class="meta">${item.updated_at}</div>
+            </div>
+            <div class="actions">
+                <button class="btn-load-item" onclick="loadJubo(${item.id})">불러오기</button>
+                <button class="btn-delete-item" onclick="deleteJubo(${item.id})">삭제</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+async function loadJubo(id) {
+    const res = await fetch(`/api/load/${id}`);
+    const result = await res.json();
+    const data = result.data;
+    currentJuboId = result.id;
+    const f = document.getElementById('juboForm');
+
+    // 단일 필드 복원
+    ['date','volume','issue','year_theme','sermon_title','sermon_author','sermon_body',
+     'new_member_name','sermon_morning_title','sermon_afternoon_title','sermon_wednesday_title',
+     'duty_table','letter_title','letter_body','letter_author','event_caption','bible_verses'
+    ].forEach(name => {
+        const el = f.querySelector(`[name="${name}"]`);
+        if (el && data[name] !== undefined) el.value = data[name];
+    });
+
+    // 광고 복원
+    const annContainer = document.getElementById('announcement-items');
+    annContainer.innerHTML = '';
+    (data.announcements || []).forEach(text => {
+        const item = document.createElement('div');
+        item.className = 'announcement-item';
+        item.innerHTML = `<textarea name="announcements">${text}</textarea><button type="button" class="btn-remove" onclick="this.parentElement.remove()">✕</button>`;
+        annContainer.appendChild(item);
+    });
+
+    // 예배순서 복원
+    ['morning','afternoon','wednesday'].forEach(prefix => {
+        const container = document.getElementById(prefix + '-items');
+        container.innerHTML = '';
+        (data[prefix] || []).forEach((item, i) => {
+            const row = document.createElement('div');
+            row.className = 'worship-row';
+            row.innerHTML = `<input type="text" name="${prefix}_label_${i}" value="${item.label || ''}"><input type="text" name="${prefix}_value_${i}" value="${item.value || ''}"><button type="button" class="btn-remove" onclick="this.parentElement.remove()">✕</button>`;
+            container.appendChild(row);
+        });
+    });
+
+    closeModal();
+    alert('불러왔습니다!');
+}
+
+async function deleteJubo(id) {
+    if (!confirm('정말 삭제하시겠습니까?')) return;
+    await fetch(`/api/delete/${id}`, {method: 'DELETE'});
+    if (currentJuboId === id) currentJuboId = null;
+    // 목록 새로고침
+    document.querySelector('.tab-btn.active').click();
+}
+</script>
+</body>
+</html>

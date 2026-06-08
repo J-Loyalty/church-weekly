@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="/static/css/jubo.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Nanum+Pen+Script&display=swap');
+</style>
+</head>
+<body>
+
+<!-- ===== 1면: 설교 칼럼 ===== -->
+<div class="page page1">
+  <div class="page1-header">
+    <div class="church-badge">예수님과<br>함께<br>행복한 교회</div>
+    <div style="text-align:center">
+      <div class="church-title">김포남현의소리</div>
+    </div>
+    <div class="church-info">
+      제{{volume}}권 {{issue}}호({{date}})<br>
+      발행: 김포남현교회<br>
+      전화: 031) 988-9182
+    </div>
+  </div>
+
+  <div class="sermon-section">
+    <div class="sermon-title">{{sermon_title}}</div>
+    <div class="sermon-author">{{sermon_author}}</div>
+    <div class="sermon-body">
+      <div class="new-member">
+        <img src="{% if new_member_photo %}{{new_member_photo}}{% else %}/static/uploads/sample_newmember.png{% endif %}" alt="새가족">
+        <p>{{new_member_name}}</p>
+      </div>
+      {{sermon_body|replace('\n', '<br>')|safe}}
+    </div>
+  </div>
+
+  <div class="year-theme">
+    ✤ {{year_theme}}
+  </div>
+</div>
+
+<!-- ===== 2면: 예배순서 + 교회소식 ===== -->
+<div class="page page2-container">
+  <div class="page2">
+    <!-- 좌: 예배순서 -->
+    <div class="page2-left">
+      <div class="worship-header" style="text-align:center; color:#c62828; border-color:#c62828;">신령과 진정으로 드리는 예배</div>
+
+      <div class="worship-subheader">{{worship_morning_name}} <span style="float:right; font-size:8pt;">{{worship_morning_time}}</span></div>
+      <table class="worship-table">
+        {% for item in worship_morning %}
+        <tr>
+          <td>{{item.label}}</td>
+          <td class="leader-cell">
+            {% if '설' in item.label and '교' in item.label %}
+            <div class="leader-wrap"><span class="leader-prefix">………</span> <strong>{{sermon_morning_title}}</strong> <span class="leader-dots"></span><span class="leader-value">{{item.value}}</span></div>
+            {% else %}
+            <div class="leader-wrap"><span class="leader-dots"></span><span class="leader-value">{{item.value}}</span></div>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+
+      <div class="worship-subheader">{{worship_afternoon_name}} <span style="float:right;">{{worship_afternoon_time}}</span></div>
+      <table class="worship-table">
+        {% for item in worship_afternoon %}
+        <tr>
+          <td>{{item.label}}</td>
+          <td class="leader-cell">
+            {% if '설' in item.label and '교' in item.label %}
+            <div class="leader-wrap"><span class="leader-prefix">………</span> <strong>{{sermon_afternoon_title}}</strong> <span class="leader-dots"></span><span class="leader-value">{{item.value}}</span></div>
+            {% else %}
+            <div class="leader-wrap"><span class="leader-dots"></span><span class="leader-value">{{item.value}}</span></div>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+
+      <div class="worship-subheader">{{worship_wednesday_name}} <span style="float:right;">사회: {{worship_wednesday[0].value if worship_wednesday else ''}}</span></div>
+      <table class="worship-table">
+        {% for item in worship_wednesday[1:] %}
+        <tr>
+          <td>{{item.label}}</td>
+          <td class="leader-cell">
+            {% if '설' in item.label and '교' in item.label %}
+            <div class="leader-wrap"><span class="leader-prefix">………</span> <strong>{{sermon_wednesday_title}}</strong> <span class="leader-dots"></span><span class="leader-value">{{item.value}}</span></div>
+            {% else %}
+            <div class="leader-wrap"><span class="leader-dots"></span><span class="leader-value">{{item.value}}</span></div>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+
+      <div class="worship-subheader">{{dawn_name}} <span style="float:right;">{{dawn_time}}</span></div>
+      <table class="worship-table" style="margin-top:1mm; width:100%;">
+        <tr>
+          <td style="width:18mm; font-weight:bold;">설 &nbsp;&nbsp;&nbsp; 교</td>
+          <td class="leader-cell">
+            <div class="leader-wrap"><span class="leader-dots"></span><span class="leader-value">{{dawn_content}}</span><span class="leader-dots"></span><span class="leader-value">{{dawn_leader}}</span></div>
+          </td>
+        </tr>
+      </table>
+
+      <div style="margin-top:2mm; font-size:7.5pt; font-weight:bold;">예배 모임</div>
+      <table class="duty-table" style="margin-top:0.5mm;">
+        <tr><td style="font-weight:bold;">주일1부예배</td><td>오전 7시 30분</td><td>유치부</td><td>주일오전11시30분</td></tr>
+        <tr><td style="font-weight:bold;">주일2부예배</td><td>오전 9시 30분</td><td>초등부</td><td>주일오전11시00분</td></tr>
+        <tr><td style="font-weight:bold;">주일3부예배</td><td>오전 11시 30분</td><td>학생부</td><td>주일오전9시30분</td></tr>
+        <tr><td style="font-weight:bold;">주일오후예배</td><td>오후 2시 30분</td><td>청년부</td><td>주일 오후 2시00분</td></tr>
+        <tr><td style="font-weight:bold;">새벽기도회</td><td>새벽 5시 30분</td><td>수요예배</td><td>주일오후7시30분</td></tr>
+      </table>
+    </div>
+
+    <!-- 우: 교회소식 -->
+    <div class="page2-right">
+      <div class="happy-church-bar">H a p p y &nbsp; C h u r c h &nbsp; w i t h &nbsp; J e s u s</div>
+      <div class="news-header-wrap">
+        <div class="news-header">교 회 소 식</div>
+      </div>
+
+      <!-- 첫번째 소식 (예배 및 환영) - 음영 밖 -->
+      {% if announcements|length > 0 %}
+      <div class="news-section">
+        {% set lines = announcements[0].split('\n') %}
+        {% if lines[0].startswith('■') %}
+        <div class="news-item-title">{{lines[0]}}</div>
+        <p>{% for line in lines[1:] if line.strip() %}{{line}}<br>{% endfor %}</p>
+        {% else %}
+        <p>{% for line in announcements[0].split('\n') if line.strip() %}{{line}}<br>{% endfor %}</p>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <!-- 하나님의 기쁜소식 subtitle + 나머지 소식 + 봉사위원 = 음영 영역 -->
+      <div class="news-shaded-area">
+        <div class="news-subtitle">
+          <span class="news-sub-en">God's goodnews, Jesus Christ</span><br>
+          <span class="news-sub-kr">하나님의 기쁜소식, 예수 그리스도</span>
+        </div>
+
+        <div class="news-items-wrap">
+        {% for ann in announcements[1:] %}
+        <div class="news-section">
+          {% set lines = ann.split('\n') %}
+          {% if lines[0].startswith('■') %}
+          <div class="news-item-title">{{lines[0]}}</div>
+          <p>{% for line in lines[1:] if line.strip() %}{{line}}<br>{% endfor %}</p>
+          {% else %}
+          <p>{% for line in ann.split('\n') if line.strip() %}{{line}}<br>{% endfor %}</p>
+          {% endif %}
+        </div>
+        {% endfor %}
+        </div>
+
+        {% if duty_rows %}
+        <div class="news-section" style="margin-top:3mm;">
+          <div class="news-item-title">■ 6월 봉사위원</div>
+          <table class="duty-table">
+          <tr>
+            <th>일시</th>
+            <th colspan="4">주 일 기 도</th>
+            <th colspan="3">안내 / 헌금</th>
+          </tr>
+          <tr>
+            <th></th><th>1부</th><th>2부</th><th>3부</th><th>오후</th><th>2부</th><th>3부</th><th>총별안내</th>
+          </tr>
+          {% for row in duty_rows %}
+          <tr>
+            <td>{{row.date}}</td>
+            <td>{{row.pray1}}</td>
+            <td>{{row.pray2}}</td>
+            <td>{{row.pray3}}</td>
+            <td>{{row.pm}}</td>
+            {% if loop.index0 == 0 %}
+            <td rowspan="2">{{duty_offer_groups[0].offer2|safe if duty_offer_groups|length > 0 else ''}}</td>
+            <td rowspan="2">{{duty_offer_groups[0].offer3|safe if duty_offer_groups|length > 0 else ''}}</td>
+            <td rowspan="2">{{duty_offer_groups[0].etc|safe if duty_offer_groups|length > 0 else ''}}</td>
+            {% elif loop.index0 == 2 %}
+            <td rowspan="{{duty_rows|length - 2}}">{{duty_offer_groups[1].offer2|safe if duty_offer_groups|length > 1 else ''}}</td>
+            <td rowspan="{{duty_rows|length - 2}}">{{duty_offer_groups[1].offer3|safe if duty_offer_groups|length > 1 else ''}}</td>
+            <td rowspan="{{duty_rows|length - 2}}">{{duty_offer_groups[1].etc|safe if duty_offer_groups|length > 1 else ''}}</td>
+            {% endif %}
+          </tr>
+          {% endfor %}
+          {% if duty_lunch %}
+          </table>
+          <table class="duty-table" style="margin-top:1mm; table-layout:fixed; width:100%;">
+          <tr>
+            <td rowspan="2" style="font-weight:bold; width:20%;">중식<br>섬김이</td>
+            {% for item in duty_lunch %}<td>{{item.date}}</td>{% endfor %}
+          </tr>
+          <tr>
+            {% for item in duty_lunch %}<td>{{item.name}}<br>{{item.group}}</td>{% endfor %}
+          </tr>
+          {% if duty_cleaning %}
+          <tr><td style="font-weight:bold;">청 소</td><td colspan="{{duty_lunch|length}}" style="text-align:left;">{{duty_cleaning}}</td></tr>
+          {% endif %}
+          </table>
+          {% endif %}
+        </table>
+      </div>
+      {% endif %}
+      </div><!-- /news-shaded-area -->
+    </div>
+  </div>
+</div>
+
+<!-- ===== 3면: 편지 + 교회안내 ===== -->
+<div class="page">
+  <div class="page3">
+    <!-- 좌: 사랑하는 분을 위한 편지 -->
+    <div class="page3-left">
+      <div class="letter-section">
+        <h2>사랑하는 분을 위한 편지</h2>
+        <div class="letter-title">{{letter_title}}</div>
+        <div class="letter-body">
+          {{letter_body|replace('\n', '<br>')|safe}}
+        </div>
+        <div class="letter-author">글쓴이 &nbsp; {{letter_author}}</div>
+      </div>
+      <div class="page3-left-photo">
+        <img src="/static/uploads/sample_3left.png" alt="단체사진">
+        <p>한 마음 명랑 운동회 &nbsp; 명랑 ~ 명랑 ~</p>
+      </div>
+    </div>
+
+    <!-- 우: 교회 안내 (고정) -->
+    <div class="page3-right">
+      <div class="church-info-section">
+        <h3>김포 남현교회 안내</h3>
+        <div class="info-block">
+          <p><strong>김포남현교회는</strong></p>
+          <p>{{church_intro|default('')|replace('\n', '</p><p>')|safe}}</p>
+        </div>
+        <div class="info-block">
+          <p>{{church_denomination|default('')}}</p>
+        </div>
+        <div class="info-block">
+          <h4>김포남현교회의 창립비전</h4>
+          <p>{{church_vision|default('')|replace('\n', '</p><p>')|safe}}</p>
+        </div>
+        <div class="info-block">
+          <h4>■ 교역자</h4>
+          <p>{{church_pastors|default('')|replace('\n', '</p><p>')|safe}}</p>
+        </div>
+        <div class="info-block">
+          <h4>■ 장로</h4>
+          <p>{{church_elders|default('')|replace('\n', '</p><p>')|safe}}</p>
+        </div>
+        <div class="info-block">
+          <h4>김포남현교회 안내</h4>
+          <p>{{church_contact|default('')|replace('\n', '</p><p>')|safe}}</p>
+        </div>
+        <div class="info-block">
+          <h4>온라인헌금 안내</h4>
+          <p>{{church_offering|default('')}}</p>
+        </div>
+        <div class="info-block">
+          <h4>우리교회가 섬기는 선교지</h4>
+          <p>{{church_mission|default('')|replace('\n', '</p><p>')|safe}}</p>
+        </div>
+        <div class="info-block map-placeholder">
+          <h4>김포남현교회 찾아 오시는 길</h4>
+          <img src="/static/uploads/sample_map.png" alt="약도" style="width:100%; margin-top:1mm;">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 4면: 행사 사진 + 말씀 ===== -->
+<div class="page page4">
+  <div class="page4-inner">
+    <div class="page4-header">
+      <span style="font-size:11pt; font-weight:bold;">예수닮기를</span>
+      <span style="font-size:9pt;">김포남현교회 홈페이지 &nbsp; www.nam-hyun.org</span>
+    </div>
+
+    {% if event_photo %}
+    <img class="event-photo" src="{{event_photo}}" alt="행사 사진">
+    {% else %}
+    <img class="event-photo" src="/static/uploads/sample_event.png" alt="행사 사진">
+    {% endif %}
+    <div class="event-caption">{{event_caption}}</div>
+
+    {% if bible_verses %}
+    <div class="bible-verses">
+      {{bible_verses|replace('\n', '<br>')|safe}}
+    </div>
+    {% endif %}
+
+    <div class="gospel-message">
+      <h2>내 삶의 이유, 예수 그리스도</h2>
+      <div class="gospel-subtitle">당신은 사람입니다. 예수님은 하나님입니다. 당신이 예수님을 믿으면</div>
+      <div class="gospel-grid">
+        {% for item in gospel_items.split('\n') if item.strip() %}
+        {% set parts = item.split('|') %}
+        <div class="gospel-item">
+          <strong>{{parts[0]}}</strong><br>
+          {{parts[1] if parts|length > 1 else ''}}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

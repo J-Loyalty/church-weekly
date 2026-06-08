@@ -1,0 +1,516 @@
+@page {
+    size: A4;
+    margin: 0;
+}
+
+@media screen {
+    body {
+        padding: 20px;
+        background: #888;
+    }
+    .page {
+        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        background: white;
+        margin: 20px auto;
+    }
+}
+
+@media print {
+    body { background: white; display: block; }
+    .page { transform: none; margin: 0; box-shadow: none; }
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Noto Serif KR', 'Batang', '바탕', serif;
+    font-size: 10pt;
+    line-height: 1.6;
+    color: #222;
+}
+
+.page {
+    width: 210mm;
+    height: 297mm;
+    padding: 10mm;
+    page-break-after: always;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.page:last-child { page-break-after: avoid; }
+
+/* === 1면 === */
+.page1-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid #333;
+    padding-bottom: 5mm;
+    margin-bottom: 5mm;
+}
+
+.page1-header .church-badge {
+    background: #1a237e;
+    color: white;
+    padding: 3mm;
+    font-size: 9pt;
+    text-align: center;
+    line-height: 1.4;
+    border-radius: 3px;
+}
+
+.page1-header .church-title {
+    font-size: 28pt;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+.page1-header .church-info {
+    font-size: 8pt;
+    text-align: right;
+    line-height: 1.8;
+}
+
+.sermon-section {
+    margin-top: 5mm;
+    flex: 1;
+    overflow: hidden;
+}
+
+.sermon-title {
+    font-size: 18pt;
+    font-weight: bold;
+    margin-bottom: 2mm;
+    border-bottom: 1px solid #999;
+    padding-bottom: 2mm;
+}
+
+.sermon-author {
+    text-align: right;
+    font-size: 11pt;
+    margin-bottom: 4mm;
+    font-weight: bold;
+}
+
+.sermon-body {
+    columns: 3;
+    column-gap: 5mm;
+    column-fill: auto;
+    font-size: 9.5pt;
+    line-height: 2.0;
+    text-align: justify;
+    height: calc(100% - 24mm);
+}
+
+.new-member {
+    break-inside: avoid;
+    text-align: center;
+    margin: 3mm 0;
+}
+
+.new-member img {
+    width: 100%;
+    height: auto;
+    max-height: 50mm;
+    object-fit: cover;
+    border: 1px solid #ccc;
+}
+
+.new-member p {
+    font-size: 8pt;
+    margin-top: 0;
+    background: #d9d9d9;
+    padding: 1mm 2mm;
+}
+
+.year-theme {
+    text-align: center;
+    font-size: 9pt;
+    border-top: 1px solid #333;
+    padding-top: 2mm;
+    margin-top: 3mm;
+}
+
+/* === 2면 === */
+.page2-container {
+    padding: 7mm 8mm;
+}
+
+.page2 {
+    display: flex;
+    gap: 4mm;
+    height: 100%;
+}
+
+.page2-left {
+    width: 50%;
+    border-right: 1px solid #ccc;
+    padding-right: 4mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.page2-right {
+    width: 50%;
+    padding-left: 4mm;
+    padding-right: 2mm;
+    font-size: 8.5pt;
+    line-height: 1.3;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.worship-header {
+    font-size: 12pt;
+    font-weight: bold;
+    border-bottom: 2px solid #1a237e;
+    padding-bottom: 1mm;
+    margin: 2mm 0 1mm 0;
+}
+
+.worship-subheader {
+    font-size: 9pt;
+    font-weight: bold;
+    margin: 2mm 0 0.5mm 0;
+    color: #1a237e;
+    background: #d9d9d9;
+    padding: 0.5mm 2mm;
+}
+
+.worship-table {
+    width: 100%;
+    font-size: 8pt;
+    border-collapse: collapse;
+}
+
+.worship-table td {
+    padding: 0.3mm 1mm;
+    vertical-align: top;
+}
+
+.worship-table td:first-child {
+    width: 18mm;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.worship-table td.leader-cell {
+    width: 100%;
+}
+
+.worship-table td.leader-cell .leader-wrap {
+    display: flex;
+    align-items: baseline;
+}
+
+.worship-table td.leader-cell .leader-wrap .leader-dots {
+    flex: 1;
+    border-bottom: 1px dotted #666;
+    margin: 0 1mm;
+    min-width: 3mm;
+    height: 0.8em;
+}
+
+.worship-table td.leader-cell .leader-value {
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.worship-table td.leader-cell .leader-prefix {
+    color: #666;
+}
+
+.worship-table .sermon-highlight {
+    font-size: 10pt;
+    font-weight: bold;
+}
+
+.news-header {
+    font-size: 12pt;
+    font-weight: bold;
+    text-align: center;
+    padding: 1mm 0;
+    letter-spacing: 3px;
+}
+
+.happy-church-bar {
+    background: #1a237e;
+    color: white;
+    text-align: center;
+    font-size: 7pt;
+    padding: 1mm 0;
+    letter-spacing: 2px;
+    margin-bottom: 1mm;
+}
+
+.news-header-wrap {
+    border: 2px solid #1a237e;
+    border-radius: 20px;
+    padding: 0.5mm 5mm;
+    text-align: center;
+    margin-bottom: 1mm;
+}
+
+.news-subtitle {
+    text-align: center;
+    margin-bottom: 1.5mm;
+    line-height: 1.3;
+}
+
+.news-shaded-area {
+    background: #f0f0f0;
+    padding: 2mm;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.news-items-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.news-sub-en {
+    font-style: italic;
+    color: #555;
+    font-size: 7.5pt;
+}
+
+.news-sub-kr {
+    font-weight: bold;
+    color: #1a237e;
+    font-size: 9pt;
+}
+
+.news-section {
+    margin-bottom: 1.5mm;
+}
+
+.news-section p {
+    font-size: 8pt;
+    line-height: 1.5;
+    margin: 0;
+}
+}
+
+.news-item-title {
+    background: #e0e0e0;
+    padding: 0.3mm 2mm;
+    font-size: 8.5pt;
+    font-weight: bold;
+    margin-bottom: 0.3mm;
+}
+
+.news-section h4 {
+    font-size: 9.5pt;
+    font-weight: bold;
+    margin-bottom: 1mm;
+}
+
+.news-section ul {
+    font-size: 8.5pt;
+    padding-left: 4mm;
+    line-height: 1.7;
+}
+
+.duty-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 7pt;
+    margin-top: 2mm;
+}
+
+.duty-table th, .duty-table td {
+    border: 0.5px solid #666;
+    padding: 0.5mm;
+    text-align: center;
+}
+
+.duty-table th {
+    background: #eee;
+}
+
+/* === 3면 === */
+.page3 {
+    display: flex;
+    gap: 5mm;
+    height: 100%;
+}
+
+.page3-left {
+    width: 62%;
+    border-right: 1px solid #ccc;
+    padding-right: 5mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: #f0f0f0;
+    padding: 3mm;
+}
+
+.page3-right {
+    width: 38%;
+    padding-left: 4mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.letter-section h2 {
+    font-size: 11pt;
+    background: #d9d9d9;
+    padding: 2mm 3mm;
+    margin-bottom: 3mm;
+}
+
+.letter-title {
+    font-size: 16pt;
+    font-weight: bold;
+    margin-bottom: 4mm;
+    padding: 0 3mm;
+}
+
+.letter-body {
+    font-size: 9.5pt;
+    line-height: 1.9;
+    text-align: justify;
+    padding: 0 3mm;
+}
+
+.letter-author {
+    text-align: right;
+    margin-top: 5mm;
+    font-weight: bold;
+    font-size: 10pt;
+}
+
+.page3-left-photo {
+    text-align: center;
+    margin-top: 3mm;
+}
+
+.page3-left-photo img {
+    width: 100%;
+    max-height: 55mm;
+    object-fit: contain;
+    border: 1px solid #ccc;
+}
+
+.page3-left-photo p {
+    font-size: 9pt;
+    margin-top: 1mm;
+}
+
+.church-info-section h3 {
+    font-size: 10pt;
+    font-weight: bold;
+    color: #1a237e;
+    border-bottom: 2px solid #1a237e;
+    padding-bottom: 1mm;
+    margin-bottom: 1mm;
+}
+
+.church-info-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.church-info-section .info-block {
+    font-size: 7.5pt;
+    line-height: 1.5;
+}
+}
+
+.church-info-section .info-block h4 {
+    font-size: 9pt;
+    font-weight: bold;
+    margin-bottom: 1mm;
+}
+
+/* === 4면 === */
+.page4 {
+    text-align: center;
+    justify-content: stretch;
+}
+
+.page4-inner {
+    border: 2px solid #333;
+    border-radius: 10mm;
+    padding: 5mm 8mm;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.page4-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3mm;
+}
+
+.event-photo {
+    width: 85%;
+    max-height: 130mm;
+    object-fit: contain;
+    margin: 3mm auto;
+    display: block;
+    border-radius: 8mm;
+}
+
+.event-caption {
+    font-size: 9pt;
+    color: #555;
+    margin: 2mm 0 3mm 0;
+}
+
+.bible-verses {
+    font-size: 12pt;
+    line-height: 2;
+    margin: 3mm 0;
+    text-align: center;
+}
+
+.gospel-message {
+    padding-top: 3mm;
+}
+
+.gospel-message h2 {
+    font-family: 'Nanum Pen Script', cursive;
+    font-size: 24pt;
+    margin-bottom: 2mm;
+}
+
+.gospel-subtitle {
+    text-align: center;
+    font-size: 9pt;
+    background: #d9d9d9;
+    padding: 1.5mm 0;
+    margin: 0 -8mm 3mm -8mm;
+    padding-left: 8mm;
+    padding-right: 8mm;
+}
+
+.gospel-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2mm 5mm;
+    text-align: left;
+    font-size: 8.5pt;
+    line-height: 1.4;
+}
+
+.gospel-item {
+    margin-bottom: 1mm;
+}
