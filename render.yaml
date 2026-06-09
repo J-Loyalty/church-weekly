@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: church-weekly
+    runtime: docker
+    plan: free
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12"
+    disk:
+      name: church-data
+      mountPath: /app/data
+      sizeGB: 1
