@@ -178,7 +178,7 @@ def generate():
     html = _prepare_html(data)
 
     with sync_playwright() as p:
-        browser = p.chromium.launch()
+        browser = p.chromium.launch(args=['--no-sandbox', '--disable-setuid-sandbox'])
         page = browser.new_page()
         page.set_content(html, wait_until='networkidle')
         pdf = page.pdf(format='A4', print_background=True)
@@ -194,7 +194,7 @@ def generate_images():
     html = _prepare_html(data)
 
     with sync_playwright() as p:
-        browser = p.chromium.launch()
+        browser = p.chromium.launch(args=['--no-sandbox', '--disable-setuid-sandbox'])
         page = browser.new_page(viewport={'width': 794, 'height': 1123})
         page.set_content(html, wait_until='networkidle')
         pages = page.query_selector_all('.page')

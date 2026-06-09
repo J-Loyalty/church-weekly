@@ -28,7 +28,7 @@
     <div class="sermon-author">{{sermon_author}}</div>
     <div class="sermon-body">
       <div class="new-member">
-        <img src="{% if new_member_photo %}{{new_member_photo}}{% else %}/static/uploads/sample_newmember.png{% endif %}" alt="새가족">
+        <img src="{% if new_member_photo %}{{new_member_photo}}{% else %}/static/images/sample_newmember.png{% endif %}" alt="새가족">
         <p>{{new_member_name}}</p>
       </div>
       {{sermon_body|replace('\n', '<br>')|safe}}
@@ -223,7 +223,7 @@
         <div class="letter-author">글쓴이 &nbsp; {{letter_author}}</div>
       </div>
       <div class="page3-left-photo">
-        <img src="{% if letter_photo %}{{letter_photo}}{% else %}/static/uploads/sample_3left.png{% endif %}" alt="단체사진">
+        <img src="{% if letter_photo %}{{letter_photo}}{% else %}/static/images/sample_3left.png{% endif %}" alt="단체사진">
         <p>{{letter_photo_caption}}</p>
       </div>
     </div>
@@ -265,7 +265,7 @@
         </div>
         <div class="info-block map-placeholder">
           <h4>김포남현교회 찾아 오시는 길</h4>
-          <img src="/static/uploads/sample_map.png" alt="약도" style="width:100%; margin-top:1mm;">
+          <img src="/static/images/sample_map.png" alt="약도" style="width:100%; margin-top:1mm;">
         </div>
       </div>
     </div>
@@ -283,7 +283,7 @@
     {% if event_photo %}
     <img class="event-photo" src="{{event_photo}}" alt="행사 사진">
     {% else %}
-    <img class="event-photo" src="/static/uploads/sample_event.png" alt="행사 사진">
+    <img class="event-photo" src="/static/images/sample_event.png" alt="행사 사진">
     {% endif %}
     <div class="event-caption">{{event_caption}}</div>
 
