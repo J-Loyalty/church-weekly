@@ -223,8 +223,8 @@
         <div class="letter-author">글쓴이 &nbsp; {{letter_author}}</div>
       </div>
       <div class="page3-left-photo">
-        <img src="/static/uploads/sample_3left.png" alt="단체사진">
-        <p>한 마음 명랑 운동회 &nbsp; 명랑 ~ 명랑 ~</p>
+        <img src="{% if letter_photo %}{{letter_photo}}{% else %}/static/uploads/sample_3left.png{% endif %}" alt="단체사진">
+        <p>{{letter_photo_caption}}</p>
       </div>
     </div>
 

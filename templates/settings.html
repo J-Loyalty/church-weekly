@@ -80,7 +80,18 @@ textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5p
 <textarea name="gospel_items" rows="10">{{settings.gospel_items}}</textarea>
 </div>
 
-<button type="submit" class="btn-save">💾 저장</button>
+<button type="submit" class="btn-save" id="floatingSave">💾 저장</button>
 </form>
+
+<style>
+#floatingSave {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 900;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+</style>
 </body>
 </html>
